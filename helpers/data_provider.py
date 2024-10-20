@@ -63,15 +63,20 @@ def __get_data(dataset: str) -> pd.DataFrame:
             repo = fetch_ucirepo(id=176)
         case 'haberman':
             repo = fetch_ucirepo(id=43)
+            true_value = 1
         case 'liver':
             repo = fetch_ucirepo(id=225)
             true_value = 1
         case 'ionosphere':
             repo = fetch_ucirepo(id=52)
+            true_value = 'g'
         case 'parkinsons':
             repo = fetch_ucirepo(id=174)
-        case 'vertebral':
-            repo = fetch_ucirepo(id=212)
+        case 'rice':
+            repo = fetch_ucirepo(id=545)
+            true_value = "Osmancik"
+        case 'banknote':
+            repo = fetch_ucirepo(id=267)
         case _:
             raise ValueError('Misspelling much, aer we?')
 

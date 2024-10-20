@@ -36,17 +36,14 @@ class PymooOptimizer(Optimizer):
 
         this = self     #Good old JS trick except in Python and reversed :)
 
-        # Dynamically create Problem class using provided heuristics
+        # Dynamically create Problem derived class using provided heuristics
         class SelectFeaturesProblem(Problem):
             def __init__(self, n_var):
                 super().__init__(n_var=n_var, n_obj=1, n_constr=0, xl=0, xu=1, vtype=bool) 
 
             def _evaluate(self, x, out, *args, **kwargs):
-                if (x.sum() == 0):
-                    out["F"] = np.full[len(x), np.inf]
-                    return
                 out["F"] = np.array([-heuristics(this.x_train.loc[:, solution], this.x_test.loc[:,  solution], this.y_train, this.y_test)
-                                    for solution in x])
+                                    if np.sum(solution) > 0 else np.inf for solution in x])
 
         algorithm = GA(
             sampling = kwargs.get("population_provider", BinaryRandomSampling()),
