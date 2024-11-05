@@ -17,3 +17,7 @@ class Optimizer:
                 heuristics: Callable[[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame], float],
                 **kwargs):
         raise NotImplementedError
+
+    @abstractmethod
+    def evolve_new_feature(self, epochs, heuristics):
+        raise NotImplementedError
