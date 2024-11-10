@@ -27,9 +27,6 @@ def protected_sqrt(x):
 def square_root(x):
     return x**2
 
-def if_else(condition, out_true, out_false):
-    return out_true if condition else out_false
-
 def prepare_expression_grammar(feature_columns):
     pset = gp.PrimitiveSet("MAIN", len(feature_columns))
 
@@ -44,7 +41,6 @@ def prepare_expression_grammar(feature_columns):
     pset.addPrimitive(math.sin, 1)
     pset.addPrimitive(math.cos, 1)
     pset.addPrimitive(protected_log, 1)
-    pset.addPrimitive(if_else, 3)
 
     # Rename arguments for readability
     for i, col_name in enumerate(feature_columns):
