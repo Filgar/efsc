@@ -12,9 +12,12 @@ def knn_accuracy(x_train: pd.DataFrame, x_test: pd.DataFrame, y_train: pd.DataFr
 
 
 def dtree_accuracy(x_train: pd.DataFrame, x_test: pd.DataFrame, y_train: pd.DataFrame, y_test: pd.DataFrame) -> float:
-    dtree = DecisionTreeClassifier()
-    dtree.fit(x_train, y_train)
-    return dtree.score(x_test, y_test)
+    scores = []
+    for _ in range(10):
+        dtree = DecisionTreeClassifier()
+        dtree.fit(x_train, y_train)
+        scores.append(dtree.score(x_test, y_test))
+    return np.mean(scores)
 
 
 

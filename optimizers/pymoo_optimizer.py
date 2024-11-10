@@ -58,7 +58,10 @@ class PymooOptimizer(Optimizer):
         super().__init__(x_train, x_test, y_train, y_test)
         self.pset = prepare_expression_grammar(x_train.columns)
 
-    def evolve_new_feature(self, epochs, heuristics):
+    def evolve_new_feature(self, epochs, heuristics, verbose = True, target_train = None, target_test = None):
+        target_train = self.x_train if target_train is None else target_train
+        target_test = self.x_test if target_test is None else target_test
+
         if not hasattr(creator, "FitnessMax"):
             creator.create("FitnessMax", base.Fitness, weights=(1.0,))
         if not hasattr(creator, "Individual"):
@@ -77,8 +80,8 @@ class PymooOptimizer(Optimizer):
             new_feature_test = self.x_test.apply(lambda row: func(*row), axis=1)
 
             # Add new feature to dataset and evaluate accuracy
-            x_train_augmented = pd.concat([self.x_train, new_feature_train.rename("new_feature")], axis=1)
-            x_test_augmented = pd.concat([self.x_test, new_feature_test.rename("new_feature")], axis=1)
+            x_train_augmented = pd.concat([target_train, new_feature_train.rename("new_feature")], axis=1)
+            x_test_augmented = pd.concat([target_test, new_feature_test.rename("new_feature")], axis=1)
             return heuristics(x_train_augmented, x_test_augmented, self.y_train, self.y_test),
 
         toolbox.register("evaluate", eval_feature)
@@ -96,7 +99,7 @@ class PymooOptimizer(Optimizer):
         stats.register("max", np.max)
 
         # Run the evolution
-        algorithms.eaSimple(population, toolbox, cxpb=0.5, mutpb=0.2, ngen=epochs, stats=stats, halloffame=hall_of_fame, verbose=True)
+        algorithms.eaSimple(population, toolbox, cxpb=0.5, mutpb=0.2, ngen=epochs, stats=stats, halloffame=hall_of_fame, verbose=verbose)
 
         # Return the best individual found as the new feature expression
         best_feature_func = toolbox.compile(expr=hall_of_fame[0])
