@@ -77,6 +77,9 @@ def __get_data(dataset: str) -> pd.DataFrame:
             true_value = "Osmancik"
         case 'banknote':
             repo = fetch_ucirepo(id=267)
+        case 'wine_quality':
+            repo = fetch_ucirepo(id=165)
+            true_value = None
         case _:
             raise ValueError('Misspelling much, aer we?')
 

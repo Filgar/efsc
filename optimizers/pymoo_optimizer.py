@@ -27,6 +27,10 @@ def protected_sqrt(x):
 def square_root(x):
     return x**2
 
+def pretty_print(individual):
+    """Convert a DEAP individual into a human-readable math expression."""
+    return str(individual).replace("add", "+").replace("mul", "*").replace("sub", "-").replace("div", "/")
+
 def prepare_expression_grammar(feature_columns):
     pset = gp.PrimitiveSet("MAIN", len(feature_columns))
 
@@ -98,8 +102,10 @@ class PymooOptimizer(Optimizer):
         algorithms.eaSimple(population, toolbox, cxpb=0.5, mutpb=0.2, ngen=epochs, stats=stats, halloffame=hall_of_fame, verbose=verbose)
 
         # Return the best individual found as the new feature expression
+        best_individual = hall_of_fame[0]
         best_feature_func = toolbox.compile(expr=hall_of_fame[0])
-        return best_feature_func
+
+        return best_feature_func, best_individual
 
     def optimize(self,
                 pop_size: int,
