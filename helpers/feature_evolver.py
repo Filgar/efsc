@@ -37,7 +37,8 @@ def evolve_new_feature(optimizer: Optimizer, x_test, name="evolved_feature", ver
 
 
 def evolve_new_feature_set(optimizer_constructor, x_train, x_val, y_train, y_val, x_test, verbose=False,
-                        repeats=10, epochs=50, heuristics=Benchmark.dtree_accuracy, min_features=1, max_features=42):
+                        repeats=10, epochs=50, heuristics=Benchmark.dtree_accuracy, population_size=64,
+                        min_features=1, max_features=42):
     '''
     Create new dataset containing only evolved features
     Parameters:
@@ -60,18 +61,24 @@ def evolve_new_feature_set(optimizer_constructor, x_train, x_val, y_train, y_val
     old_metric = float('-inf')
     new_metric = float('inf')
     feature_count = 0
+    epochs_without_gain = 0
 
-    while (new_metric - old_metric > 0 or feature_count < min_features) and feature_count < max_features:
+    while epochs_without_gain < 3 and feature_count < min_features and feature_count < max_features:
         old_metric = new_metric
         feature_count += 1
         optimizer = optimizer_constructor(pd.concat([x_train, x_train_new], axis=1), pd.concat([x_val, x_val_new], axis=1), y_train, y_val)
         best_feature_func, _ = optimizer.evolve_new_feature(epochs=epochs, heuristics=heuristics, verbose=verbose, repeats = repeats,
-                                                            target_train = x_train_new, target_test = x_val_new)
+                                                            target_train = x_train_new, target_test = x_val_new, population_size = population_size)
         
         x_train_new[f'evolved_feature_{feature_count}'] = pd.concat([x_train, x_train_new], axis=1).apply(lambda row: best_feature_func(*row), axis=1)
         x_test_new[f'evolved_feature_{feature_count}'] = pd.concat([x_test, x_test_new], axis=1).apply(lambda row: best_feature_func(*row), axis=1)
         x_val_new[f'evolved_feature_{feature_count}'] = pd.concat([x_val, x_val_new], axis=1).apply(lambda row: best_feature_func(*row), axis=1)
         
         new_metric = np.round(heuristics(x_train_new, x_val_new, y_train, y_val, repeats) * 100, 2)
+        
+        if new_metric - old_metric > 0:
+            epochs_without_gain = 0
+        else:
+            epochs_without_gain += 1
 
     return x_train_new, x_val_new, x_test_new

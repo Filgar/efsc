@@ -85,6 +85,8 @@ def __get_data(dataset: str) -> pd.DataFrame:
             repo = fetch_ucirepo(id=162)
         case 'students':
             repo = fetch_ucirepo(id=320)
+        case 'crime':
+            repo = fetch_ucirepo(id=183)
         case _:
             raise ValueError('Misspelling much, aer we?')
 

@@ -58,7 +58,7 @@ class PymooOptimizer(Optimizer):
         super().__init__(x_train, x_test, y_train, y_test)
         self.pset = prepare_expression_grammar(x_train.columns)
 
-    def evolve_new_feature(self, epochs, heuristics, verbose = True, target_train = None, target_test = None, repeats=10):
+    def evolve_new_feature(self, epochs, heuristics, verbose = True, target_train = None, target_test = None, repeats=10, population_size=64):
         target_train = self.x_train if target_train is None else target_train
         target_test = self.x_test if target_test is None else target_test
 
@@ -90,7 +90,7 @@ class PymooOptimizer(Optimizer):
         toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
         toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=self.pset)
 
-        population = toolbox.population(n=50)
+        population = toolbox.population(n=population_size)
         hall_of_fame = tools.HallOfFame(1)
         stats = tools.Statistics(lambda ind: ind.fitness.values)
         stats.register("avg", np.mean)
