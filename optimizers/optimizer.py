@@ -14,10 +14,14 @@ class Optimizer:
     def optimize(self,
                 pop_size: int,
                 epochs: int,
-                heuristics: Callable[[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame], float],
+                heuristics: Callable[[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, int], float],
                 **kwargs):
         raise NotImplementedError
 
     @abstractmethod
     def evolve_new_feature(self, epochs, heuristics):
         raise NotImplementedError
+    
+    @abstractmethod
+    def get_training_data(self):
+        return self.x_train, self.y_train, self.x_test, self.y_test

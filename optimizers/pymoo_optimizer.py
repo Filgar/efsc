@@ -58,7 +58,7 @@ class PymooOptimizer(Optimizer):
         super().__init__(x_train, x_test, y_train, y_test)
         self.pset = prepare_expression_grammar(x_train.columns)
 
-    def evolve_new_feature(self, epochs, heuristics, verbose = True, target_train = None, target_test = None):
+    def evolve_new_feature(self, epochs, heuristics, verbose = True, target_train = None, target_test = None, repeats=10):
         target_train = self.x_train if target_train is None else target_train
         target_test = self.x_test if target_test is None else target_test
 
@@ -82,7 +82,7 @@ class PymooOptimizer(Optimizer):
             # Add new feature to dataset and evaluate accuracy
             x_train_augmented = pd.concat([target_train, new_feature_train.rename("new_feature")], axis=1)
             x_test_augmented = pd.concat([target_test, new_feature_test.rename("new_feature")], axis=1)
-            return heuristics(x_train_augmented, x_test_augmented, self.y_train, self.y_test),
+            return heuristics(x_train_augmented, x_test_augmented, self.y_train, self.y_test, repeats),
 
         toolbox.register("evaluate", eval_feature)
         toolbox.register("select", tools.selTournament, tournsize=3)
@@ -110,18 +110,19 @@ class PymooOptimizer(Optimizer):
     def optimize(self,
                 pop_size: int,
                 epochs: int,
-                heuristics: Callable[[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame], float],
+                heuristics: Callable[[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, int], float],
                 **kwargs):
         '''
         Optimize feature selection using genetic algorithm
         Parameters:
             pop_size: int: population size
             epochs: int: number of generations
-            heuristics: Callable[[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame], float]:
+            heuristics: Callable[[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, int], float]:
                 function to optimize
             **kwargs: dict: additional parameters
                 - population_provider: Sampling: population sampling strategy
                 - verbose: bool: print logs
+                - repeats: int: number of repeats for heuristics function, from which mean metric is calculated
         Returns:
             np.array: selected features
             float: heuristics value
@@ -130,12 +131,13 @@ class PymooOptimizer(Optimizer):
         this = self     #Good old JS trick except in Python and reversed :)
 
         # Dynamically create Problem derived class using provided heuristics
+        repeats = kwargs.get("repeats", 10)
         class SelectFeaturesProblem(Problem):
             def __init__(self, n_var):
                 super().__init__(n_var=n_var, n_obj=1, n_constr=0, xl=0, xu=1, vtype=bool) 
 
             def _evaluate(self, x, out, *args, **kwargs):
-                out["F"] = np.array([-heuristics(this.x_train.loc[:, solution], this.x_test.loc[:,  solution], this.y_train, this.y_test)
+                out["F"] = np.array([-heuristics(this.x_train.loc[:, solution], this.x_test.loc[:,  solution], this.y_train, this.y_test, repeats)
                                     if np.sum(solution) > 0 else np.inf for solution in x])
 
         algorithm = GA(
