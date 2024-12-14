@@ -59,7 +59,7 @@ def __get_data(dataset: str) -> pd.DataFrame:
     true_value = None
     match dataset:
         case 'breast': 
-            repo = fetch_ucirepo(id=17)
+            repo = fetch_ucirepo(id=17)     #classification
             true_value = 'B'
         case 'blood':
             repo = fetch_ucirepo(id=176)
@@ -70,10 +70,10 @@ def __get_data(dataset: str) -> pd.DataFrame:
             repo = fetch_ucirepo(id=225)
             true_value = 1
         case 'ionosphere':
-            repo = fetch_ucirepo(id=52)
+            repo = fetch_ucirepo(id=52)     #classification
             true_value = 'g'
         case 'parkinsons':
-            repo = fetch_ucirepo(id=174)
+            repo = fetch_ucirepo(id=174)    #classification
         case 'rice':
             repo = fetch_ucirepo(id=545)
             true_value = "Osmancik"
@@ -82,11 +82,33 @@ def __get_data(dataset: str) -> pd.DataFrame:
         case 'wine_quality':
             repo = fetch_ucirepo(id=165)
         case 'forest_fires':
-            repo = fetch_ucirepo(id=162)
+            repo = fetch_ucirepo(id=162)    #regression +
         case 'students':
-            repo = fetch_ucirepo(id=320)
+            repo = fetch_ucirepo(id=320)    #regression +
         case 'crime':
             repo = fetch_ucirepo(id=183)
+        case 'concrete':
+            repo = fetch_ucirepo(id=165)    #regression +
+        case 'maintenance':
+            repo = fetch_ucirepo(id=601)    #regression +
+        case 'solar':
+            repo = fetch_ucirepo(id=89)    #regression
+        case 'energy':
+            repo = fetch_ucirepo(id=374)    #regression +
+        case 'churn':
+            repo = fetch_ucirepo(id=563)    #regression +
+        case 'wine_qual':
+            repo = fetch_ucirepo(id=186)    #regression +
+        case 'spambase':
+            repo = fetch_ucirepo(id=94)    #classification
+        case 'car_eval':
+            repo = fetch_ucirepo(id=19)    #classification
+        case 'bank_marketing':
+            repo = fetch_ucirepo(id=222)  # classification
+        case 'forest_cover':
+            repo = fetch_ucirepo(id=31)  # classification
+        case 'qsar':
+            repo = fetch_ucirepo(id=246)  # classification
         case _:
             raise ValueError('Misspelling much, aer we?')
 
