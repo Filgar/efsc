@@ -92,7 +92,7 @@ def __get_data(dataset: str) -> pd.DataFrame:
         case 'maintenance':
             repo = fetch_ucirepo(id=601)    #regression +
         case 'solar':
-            repo = fetch_ucirepo(id=89)    #regression
+            repo = fetch_ucirepo(id=89)    #regression -
         case 'energy':
             repo = fetch_ucirepo(id=374)    #regression +
         case 'churn':
