@@ -107,8 +107,16 @@ def __get_data(dataset: str) -> pd.DataFrame:
             repo = fetch_ucirepo(id=222)  # classification
         case 'forest_cover':
             repo = fetch_ucirepo(id=31)  # classification
-        case 'qsar':
-            repo = fetch_ucirepo(id=246)  # classification
+        case 'wine':
+            repo = fetch_ucirepo(id=109)  # classification
+        case 'students_dropout':
+            repo = fetch_ucirepo(id=697)  # classification
+        case 'national_poll':
+            repo = fetch_ucirepo(id=936)  # classification
+        case 'aids':
+            repo = fetch_ucirepo(id=890)  # classification
+        case 'cirrhosis':
+            repo = fetch_ucirepo(id=878)  # classification
         case _:
             raise ValueError('Misspelling much, aer we?')
 
